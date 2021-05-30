@@ -1,9 +1,11 @@
 from faker.factory import Factory
 import random
 import time
+import datetime
+from clickhouse_driver import Client
 
 
-class Producer:
+class UserDataProducer:
     def __init__(self, and_num=10000, ios_num=5000):
         self.Faker = Factory.create
         self.fake = self.Faker("zh_CN")
@@ -101,7 +103,7 @@ class Producer:
         生成安卓uuid
         """
         t = time.time()
-        for uid in range(100000000, 100000000+self.and_num):
+        for uid in range(100000000, 100000000 + self.and_num):
             self.and_uid_dict[uid] = {'platform': 'android', 'country': self.country}
         t1 = time.time()
         print('生成安卓uuid列表完成' + "\t time(s):" + str(round(t1 - t, 4)))
@@ -253,3 +255,81 @@ class Producer:
         t1 = time.time()
         print('生成全部 uuid列表完成' + "\t time(s):" + str(round(t1 - t, 4)))
         return uuid_dict
+
+
+class ItemDataProducer:
+    def __init__(self, item_num=1000):
+        self.Faker = Factory.create
+        self.fake = self.Faker("zh_CN")
+        self.item_num = item_num
+        self.item_dict = {}
+
+    def pro_item(self):
+        for item_id in range(100000, 100000 + self.item_num):
+            self.item_dict[item_id] = {}
+            self.item_dict[item_id]["type_id"] = item_id % 100
+            self.item_dict[item_id]["price"] = random.randint(1, 9999)
+        return self.item_dict
+
+
+class DB:
+    def __init__(self, host, port=9000, database='default', user='default', passwd=''):
+        """
+        :param host: host
+        :param port: 端口 默认9000
+        :param database: 默认数据库 默认default
+        :param user: user 默认default
+        :param passwd: passwd 默认空
+        """
+        self.host = host
+        self.port = port
+        self.default_database = database
+        self.passwd = passwd
+        self.user = user
+        self.client = Client(host=self.host, user=self.user, port=self.port, database=self.default_database,
+                             password=self.passwd)
+
+    def write_data(self, data, database=None, table=None, insert_cols=None) -> int:
+        """
+        :param data: 批量写入数据
+        :param database: 写入db
+        :param table: 写入table
+        :param insert_cols: 写入字段
+        :return: 插入结果返回
+        """
+        if len(data) <= 0:
+            return -1
+        database = database if database is None else self.default_database
+        if insert_cols is None:
+            insert_str = f"""insert into {database}.{table}  values"""
+        else:
+            insert_str = f"""insert into {database}.{table} ({insert_cols}) values"""
+        try:
+            res = self.client.execute(insert_str, data)
+            return res
+        except Exception as e:
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\tError: insert into ClickHouse\t' + str(e))
+            return -1
+
+    def close_con(self):
+        try:
+            if self.client is None:
+                return 0
+            else:
+                self.client.disconnect()
+                self.client = None
+        except Exception as e:
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\tError: close connect error\t' + str(e))
+            return -1
+
+    def execute(self, sql):
+        try:
+            if self.client is None:
+                print("connect is closed")
+                self.client = Client(host=self.host, user=self.user, port=self.port, database=self.default_database,
+                                     password=self.passwd)
+            else:
+                pass
+            self.client.execute(sql)
+        except Exception as e:
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + str(e))

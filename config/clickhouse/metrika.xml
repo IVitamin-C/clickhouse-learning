@@ -1,0 +1,30 @@
+<yandex>
+
+  <!-- 集群配置 -->
+  <clickhouse_remote_servers>
+    <cluster>
+      <shard>
+        <weight>1</weight>
+        <internal_replication>true</internal_replication>
+        <replica>
+            <host>vc</host>
+            <port>9000</port>
+            <user>default</user>
+            <password></password>
+        </replica>
+      </shard>
+    </cluster>
+  </clickhouse_remote_servers>
+  <zookeeper-servers>
+    <node index="1">
+        <host>vc</host>
+        <port>2181</port>
+    </node>
+  </zookeeper-servers>
+  <macros>
+    <layer>cluster</layer>
+    <shard>shard1</shard>
+    <replica>ck01</replica>
+  </macros>
+
+</yandex>
