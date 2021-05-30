@@ -70,7 +70,5 @@ if __name__ == '__main__':
         data = """{second},{ip},{isp},{uid},{ver},{item_id},{show_cnt},{click_cnt},{show_time}""".format(
             second=second, ip=ip, isp=isp, uid=uid, ver=ver, item_id=item_id, show_cnt=show_cnt,
             click_cnt=click_cnt, show_time=show_time)
-        print(str(data))
-        time.sleep(100)
         data_list.append(data)
         time.sleep(random.randint(10, 100) // 1000)

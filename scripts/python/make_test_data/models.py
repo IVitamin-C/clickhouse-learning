@@ -5,7 +5,7 @@ import datetime
 from clickhouse_driver import Client
 
 class UserDataProducer:
-    def __init__(self, and_num=10000, ios_num=5000):
+    def __init__(self, and_num:int=10000, ios_num:int=5000):
         self.Faker = Factory.create
         self.fake = self.Faker("zh_CN")
         self.app_version = (
@@ -258,7 +258,7 @@ class UserDataProducer:
 
 
 class ItemDataProducer:
-    def __init__(self, item_num=1000):
+    def __init__(self, item_num:int=1000):
         self.Faker = Factory.create
         self.fake = self.Faker("zh_CN")
         self.item_num = item_num
@@ -273,7 +273,7 @@ class ItemDataProducer:
 
 
 class DB:
-    def __init__(self, host, port=9000, database='default', user='default', passwd=''):
+    def __init__(self, host:str, port:int=9000, database:str='default', user:str='default', passwd:str=''):
         """
         :param host: host
         :param port: 端口 默认9000
@@ -289,7 +289,7 @@ class DB:
         self.client = Client(host=self.host, user=self.user, port=self.port, database=self.default_database,
                              password=self.passwd)
 
-    def write_data(self, data, database=None, table=None, insert_cols=None) -> int:
+    def write_data(self, data:list, database:str=None, table:str=None, insert_cols:str=None) -> int:
         """
         :param data: 批量写入数据
         :param database: 写入db
