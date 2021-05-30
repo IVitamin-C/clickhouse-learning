@@ -1,4 +1,4 @@
-from scripts.python.models import UserDataProducer
+from .models import UserDataProducer
 import time
 import json
 

@@ -1,4 +1,4 @@
-from scripts.python.models import UserDataProducer, ItemDataProducer, DB
+from .models import UserDataProducer, ItemDataProducer, DB
 import time
 from faker import Factory
 import random
