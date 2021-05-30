@@ -4,6 +4,7 @@ day Date default toDate(second) comment '数据分区-天(Date)'
 ,hour DateTime default toStartOfHour(second) comment '数据时间-小时(DateTime)'
 ,second DateTime default '1970-01-01 08:00:00' comment '数据时间-秒'
 ,insert_second DateTime default now() comment '数据写入时间'
+,platform String default '' comment '平台 android/ios'
 ,ip String default '' comment 'client-ip'
 ,isp String default '' comment '运营商'
 ,uid UInt32 default 0 comment 'uid'
@@ -16,7 +17,7 @@ day Date default toDate(second) comment '数据分区-天(Date)'
 engine=ReplicatedMergeTree('/clickhouse/tables/{layer}-{shard}/ods.action_001_local','{replica}')
 PARTITION BY day
 PRIMARY KEY (day,hour)
-ORDER BY (day,hour,item_id)
+ORDER BY (day,hour,platform,item_id)
 TTL day + toIntervalDay(10) + toIntervalHour(4)
 SETTINGS index_granularity = 8192
 ;

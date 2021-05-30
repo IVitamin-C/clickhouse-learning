@@ -46,12 +46,13 @@ if __name__ == '__main__':
     db_con = DB(host=host, port=port, user=user, passwd=passwd)
     data_list = []
     st = time.time()
-    insert_cols = "second,ip,isp,uid,ver,item_id,inshow_time,click_cnt,is_add_"
+    insert_cols = "second,platform,ip,isp,uid,ver,item_id,action_a_cnt,action_b_cnt,action_c_cnt,\
+        action_a_time,action_b_time,action_c_time,action_d_sum,action_e_sum,action_f_sum"
     while 1:
         et = time.time()
-        if len(data_list) > 1000 and et - st <= 5:
+        if len(data_list) > 10000 and et - st <= 5:
             time.sleep(5 - (et - st))
-        if len(data_list) > 1000 or et - st >= 10:
+        if len(data_list) > 10000 or et - st >= 10:
             t0 = time.time()
             db_con.write_data(data=data_list, database=database, table=insert_table, insert_cols=insert_cols)
             t1 = time.time()
@@ -62,13 +63,21 @@ if __name__ == '__main__':
             continue
         second = fake.date_time_between(start_date="-1d", end_date="now", tzinfo=None)
         uid = random.choice(uid_list)
+        platform = user_dict[uid]['platform']
         ip = user_dict[uid]['ip']
         isp = user_dict[uid]['isp']
         ver = user_dict[uid]['app_version']
         item_id = random.choice(item_list)
-        show_cnt = random.randint(1, 100)
-        click_cnt = random.randint(0, show_cnt)
-        show_time = random.randint(1000, 30000)  # 毫秒
-        data = (second,ip,isp,uid,ver,item_id,show_cnt,click_cnt,show_time)
+        action_a_cnt = random.randint(1, 100)
+        action_b_cnt = random.randint(0, action_a_cnt)
+        action_c_cnt =  random.randint(0, action_b_cnt) if action_b_cnt > 0 else 0
+        action_a_time = int(action_a_cnt *  random.randint(3000,5000)/10000 * random.randint(1000,2000))
+        action_b_time = int(action_b_cnt *  random.randint(5000,8000)/10000 * random.randint(1000,3000))
+        action_c_time = int(action_c_cnt *  random.randint(7000,10000)/10000 * random.randint(1000,4000))
+        action_d_sum =  random.randint(0,10)
+        action_e_sum = item_dict[item_id]['price'] * action_d_sum
+        action_f_sum = int(action_e_sum *  random.randint(750,1000)/1000 * 100)
+        data = (second,platform,ip,isp,uid,ver,item_id,action_a_cnt,action_b_cnt,action_c_cnt,action_a_time,
+                action_b_time,action_c_time,action_d_sum,action_e_sum,action_f_sum)
         data_list.append(data)
-        time.sleep(random.randint(10, 100) // 1000)
+        time.sleep(random.randint(5, 50) // 1000)
