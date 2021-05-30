@@ -17,7 +17,7 @@ if __name__ == '__main__':
     item_pro = ItemDataProducer(item_num=100)
     item_dict = item_pro.pro_item()
     item_list = list(item_dict.keys())
-    host = "172.20.111.124"
+    host = "127.0.0.1"
     port = 9000
     user = "default"
     passwd = ""
