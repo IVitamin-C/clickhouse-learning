@@ -58,6 +58,8 @@ if __name__ == '__main__':
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + "\tInsert table successfully,sum:" + str(
                 len(data_list)) + "\t time(s):" + str(round(t1 - t0, 4)))
             st = time.time()
+            data_list=[]
+            continue
         second = fake.date_time_between(start_date="-1d", end_date="now", tzinfo=None)
         uid = random.choice(uid_list)
         ip = user_dict[uid]['ip']
@@ -67,8 +69,6 @@ if __name__ == '__main__':
         show_cnt = random.randint(1, 100)
         click_cnt = random.randint(0, show_cnt)
         show_time = random.randint(1000, 30000)  # 毫秒
-        data = """{second},{ip},{isp},{uid},{ver},{item_id},{show_cnt},{click_cnt},{show_time}""".format(
-            second=second, ip=ip, isp=isp, uid=uid, ver=ver, item_id=item_id, show_cnt=show_cnt,
-            click_cnt=click_cnt, show_time=show_time)
+        data = (second,ip,isp,uid,ver,item_id,show_cnt,click_cnt,show_time)
         data_list.append(data)
         time.sleep(random.randint(10, 100) // 1000)
