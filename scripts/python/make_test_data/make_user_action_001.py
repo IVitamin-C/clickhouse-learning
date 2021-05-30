@@ -1,21 +1,41 @@
+import json
 from models import UserDataProducer, ItemDataProducer, DB
 import time
 from faker import Factory
 import random
 import datetime
-
+import os
 if __name__ == '__main__':
+    #判断是否生成文件，如果生成直接读取，未生成再生成。 
     Faker = Factory.create
     fake = Faker("zh_CN")
-    # 生成安卓uuid 个数
-    and_num = 10000
-    # 生成ios uuid 个数
-    ios_num = 5000
-    user_pro = UserDataProducer(and_num=and_num, ios_num=ios_num)
-    user_dict = user_pro.pro_user_info()
+    user_dict={}
+    item_dict={}
+    if os.path.exists('files/user_dim.txt'):
+        print('user_dim存在，直接读取')
+        with open('files/user_dim.txt', 'r', encoding='utf-8') as f1:
+            for line in f1:
+               x=json.loads(line)
+               user_dict[x['uid']]=x
+    else:
+        print('user_dim不存在，重新生成')
+        # 生成安卓uuid 个数
+        and_num = 10000
+        # 生成ios uuid 个数
+        ios_num = 5000
+        user_pro = UserDataProducer(and_num=and_num, ios_num=ios_num)
+        user_dict = user_pro.pro_user_info()
     uid_list = list(user_dict.keys())
-    item_pro = ItemDataProducer(item_num=100)
-    item_dict = item_pro.pro_item()
+    if os.path.exists('files/item_dim.txt'):
+        print('item_dim存在，直接读取')
+        with open('files/item_dim.txt', 'r', encoding='utf-8') as f1:
+            for line in f1:
+                x=json.loads(line)
+                item_dict[x['item_id']]=x
+    else:
+        print('item_dim不存在，重新生成')
+        item_pro = ItemDataProducer(item_num=100)
+        item_dict = item_pro.pro_item()
     item_list = list(item_dict.keys())
     host = "127.0.0.1"
     port = 9000
@@ -50,5 +70,7 @@ if __name__ == '__main__':
         data = """{second},{ip},{isp},{uid},{ver},{item_id},{show_cnt},{click_cnt},{show_time}""".format(
             second=second, ip=ip, isp=isp, uid=uid, ver=ver, item_id=item_id, show_cnt=show_cnt,
             click_cnt=click_cnt, show_time=show_time)
+        print(str(data))
+        time.sleep(100)
         data_list.append(data)
         time.sleep(random.randint(10, 100) // 1000)

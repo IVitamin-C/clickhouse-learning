@@ -4,7 +4,6 @@ import time
 import datetime
 from clickhouse_driver import Client
 
-
 class UserDataProducer:
     def __init__(self, and_num=10000, ios_num=5000):
         self.Faker = Factory.create
@@ -245,6 +244,7 @@ class UserDataProducer:
 
         :return:<dict>返回安卓和ios 整体用户字典
         """
+
         t = time.time()
         if len(self.and_uid_dict) <= 0:
             self.pro_and_user_info()
