@@ -28,6 +28,6 @@ TTL day + toIntervalDay(10) + toIntervalHour(4)
 SETTINGS index_granularity = 8192
 ;
 --drop table dws.action_002 on cluster cluster;
-create table dws.action_002 on cluster cluster
+create table dws.action_002_dis on cluster cluster
 as ods.action_002_local
 engine=Distributed(cluster,ods,action_002_local,rand());

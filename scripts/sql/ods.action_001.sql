@@ -9,7 +9,7 @@ day Date default toDate(second) comment '数据分区-天(Date)'
 ,isp String default '' comment '运营商'
 ,uid UInt32 default 0 comment 'uid'
 ,ver String default '' comment '版本'
-,item_id UInt32 default 0 comment '商品id'
+,item_id UInt32 default 0 comment '物品id'
 ,show_cnt UInt32 default 0 comment '曝光次数'
 ,click_cnt UInt32 default 0 comment '点击次数'
 ,show_time UInt32 default 0 comment '曝光时间'
@@ -22,6 +22,6 @@ TTL day + toIntervalDay(10) + toIntervalHour(4)
 SETTINGS index_granularity = 8192
 ;
 --drop table dws.action_001 on cluster cluster;
-create table dws.action_001 on cluster cluster
+create table dws.action_001_dis on cluster cluster
 as ods.action_001_local
 engine=Distributed(cluster,ods,action_001_local,rand());
