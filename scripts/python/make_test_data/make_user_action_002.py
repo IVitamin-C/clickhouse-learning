@@ -50,9 +50,9 @@ if __name__ == '__main__':
         action_a_time,action_b_time,action_c_time,action_d_sum,action_e_sum,action_f_sum"
     while 1:
         et = time.time()
-        if len(data_list) > 10000 and et - st <= 5:
+        if len(data_list) > 2000 and et - st <= 5:
             time.sleep(5 - (et - st))
-        if len(data_list) > 10000 or et - st >= 10:
+        if len(data_list) > 2000 or et - st >= 10:
             t0 = time.time()
             db_con.write_data(data=data_list, database=database, table=insert_table, insert_cols=insert_cols)
             t1 = time.time()
@@ -61,7 +61,7 @@ if __name__ == '__main__':
             st = time.time()
             data_list=[]
             continue
-        second = fake.date_time_between(start_date="-1d", end_date="now", tzinfo=None)
+        second = fake.date_time_between(start_date="-3h", end_date="now", tzinfo=None)
         uid = random.choice(uid_list)
         platform = user_dict[uid]['platform']
         ip = user_dict[uid]['ip']
