@@ -1,4 +1,4 @@
-from .models import UserDataProducer
+from models import UserDataProducer
 import time
 import json
 
@@ -10,7 +10,7 @@ if __name__ == '__main__':
     ios_num = 5000
     pro = UserDataProducer(and_num=and_num, ios_num=ios_num)
     user_dict = pro.pro_user_info()
-    with open('../../files/user_dim.txt', 'w', encoding='utf-8') as f1:
+    with open('files/user_dim.txt', 'w', encoding='utf-8') as f1:
         n = 0
         for k, v in user_dict.items():
             v['uid'] = k

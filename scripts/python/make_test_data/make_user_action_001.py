@@ -1,4 +1,4 @@
-from .models import UserDataProducer, ItemDataProducer, DB
+from models import UserDataProducer, ItemDataProducer, DB
 import time
 from faker import Factory
 import random
@@ -29,8 +29,8 @@ if __name__ == '__main__':
     insert_cols = "second,ip,isp,uid,ver,item_id,show_cnt,click_cnt,show_time"
     while 1:
         et = time.time()
-        if len(data_list) > 1000 and et - st <= 1:
-            time.sleep(1 - (et - st))
+        if len(data_list) > 1000 and et - st <= 5:
+            time.sleep(5 - (et - st))
         if len(data_list) > 1000 or et - st >= 10:
             t0 = time.time()
             db_con.write_data(data=data_list, database=database, table=insert_table, insert_cols=insert_cols)

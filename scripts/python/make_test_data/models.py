@@ -299,7 +299,7 @@ class DB:
         """
         if len(data) <= 0:
             return -1
-        database = database if database is None else self.default_database
+        database = database if database is not None else self.default_database
         if insert_cols is None:
             insert_str = f"""insert into {database}.{table}  values"""
         else:
