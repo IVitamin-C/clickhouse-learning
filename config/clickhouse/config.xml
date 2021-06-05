@@ -118,7 +118,7 @@
          (the server may be connected to multiple networks via multiple addresses)
       -->
 
-    <interserver_http_host>vc</interserver_http_host>
+    <!-- <interserver_http_host></interserver_http_host> -->
 
 
     <!-- You can specify credentials for authenthication between replicas.
