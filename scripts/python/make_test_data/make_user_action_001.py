@@ -68,7 +68,7 @@ if __name__ == '__main__':
         ver = user_dict[uid]['app_version']
         item_id = random.choice(item_list)
         show_cnt = random.randint(1, 100)
-        click_cnt = random.randint(0, show_cnt)
+        click_cnt = random.randint(0, show_cnt) if show_cnt>=80 or uid%13==0 else 0
         show_time = random.randint(1000, 30000)  # 毫秒
         data = (second,platform,ip,isp,uid,ver,item_id,show_cnt,click_cnt,show_time)
         data_list.append(data)

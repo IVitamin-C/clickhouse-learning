@@ -68,15 +68,15 @@ if __name__ == '__main__':
         isp = user_dict[uid]['isp']
         ver = user_dict[uid]['app_version']
         item_id = random.choice(item_list)
-        action_a_cnt = random.randint(1, 100)
-        action_b_cnt = random.randint(0, action_a_cnt)
-        action_c_cnt =  random.randint(0, action_b_cnt) if action_b_cnt > 0 else 0
+        action_a_cnt = random.randint(40, 100) if uid%13==0 else random.randint(0, 60)
+        action_b_cnt = random.randint(0, action_a_cnt) if action_a_cnt >= 50 else 0
+        action_c_cnt =  random.randint(0, action_b_cnt) if action_b_cnt >= 20 else 0
         action_a_time = int(action_a_cnt *  random.randint(3000,5000)/10000 * random.randint(1000,2000))
         action_b_time = int(action_b_cnt *  random.randint(5000,8000)/10000 * random.randint(1000,3000))
         action_c_time = int(action_c_cnt *  random.randint(7000,10000)/10000 * random.randint(1000,4000))
         action_d_sum =  random.randint(0,10)
         action_e_sum = item_dict[item_id]['price'] * action_d_sum
-        action_f_sum = int(action_e_sum *  random.randint(750,1000)/1000 * 100)
+        action_f_sum = int(action_e_sum *  random.randint(750,1000)/1000)
         data = (second,platform,ip,isp,uid,ver,item_id,action_a_cnt,action_b_cnt,action_c_cnt,action_a_time,
                 action_b_time,action_c_time,action_d_sum,action_e_sum,action_f_sum)
         data_list.append(data)

@@ -19,6 +19,32 @@ SOURCE(
   )
  ) LIFETIME(MIN 1800 MAX 3600) LAYOUT(HASHED())
  
---使用
---dictGet('dim.dict_user_dim', 'platform',toUInt64(uid))
- 
+--单value使用
+--方法1:dictGet('dim.dict_user_dim', 'platform',toUInt64(uid))
+select dictGet('dim.dict_user_dim', 'platform',toUInt64(uid)) as platform,uniqCombined(uid) as uv 
+from dws.action_001_dis
+where day='2021-06-05'
+group by platform
+--方法2:通过join
+select t2.platform as platform,uniqCombined(t1.uid) as uv 
+from dws.action_001_dis t1
+join dim.dict_user_dim t2
+on toUInt64(t1.uid)=t2.uid
+where day='2021-06-05'
+group by platform
+
+
+--多value使用
+select t2.platform as platform,t2.gender as gender,uniqCombined(t1.uid) as uv 
+from dws.action_001_dis t1
+join dim.dict_user_dim t2
+on toUInt64(t1.uid)=t2.uid
+where day='2021-06-05'
+group by platform,gender
+
+
+
+select dictGet('dim.dict_user_dim', 'platform',toUInt64(uid)) as platform,dictGet('dim.dict_user_dim', 'gender',toUInt64(uid)) as gender,uniqCombined(uid) as uv 
+from dws.action_001_dis
+where day='2021-06-05'
+group by platform,gender
