@@ -68,32 +68,47 @@ class CHSQL:
         where cluster='{cluster}'
         order by shard_num,replica_num
     """
-    get_partitions = """    select partition
+    get_partitions = """select partition
     from (
-    SELECT
-        arr AS shard,
-        partition,
-        sumIf(partition_bytes,host=arr) AS partition_bytes
-    FROM (
-        select hostName() as host
-            ,partition
-            ,sum(toUInt32(bytes_on_disk/1024/1024)) AS partition_bytes
-        from cluster('{cluster}', system, parts)
-        WHERE (database = '{database}') AND (table = '{table}') 
-            AND (toDate(parseDateTimeBestEffortOrZero(toString(partition))) <= (today() - 3)) 
-            AND (bytes_on_disk > ((100 * 1024) * 1024))
-            AND disk_name<>'hdfs'
-        group by host,partition
-    ) array join (select groupArray(hostName()) AS shard from cluster('{cluster}', system, one)) as arr
-    GROUP BY
-        shard,
-        partition
+        SELECT
+            a.shard,
+            a.partition,
+            sum(b.partition_bytes) AS partition_bytes
+        FROM (
+            select t1.shard
+                ,t2.partition
+            from (
+                select hostName() AS shard from clusterAllReplicas('{cluster}', system, one)
+            )t1
+            cross join (
+                select distinct partition
+                from clusterAllReplicas('{cluster}', system, parts)
+                WHERE (database = '{database}') AND (table = '{table}')
+                    AND (toDate(parseDateTimeBestEffortOrZero(toString(partition))) <= (today() - 3))
+                    AND (bytes_on_disk > ((100 * 1024) * 1024))
+                    AND disk_name<>'hdfs'
+                group by partition
+            )t2
+        )a
+        left join(
+            select hostName() as shard
+                ,partition
+                ,sum(toUInt32(bytes_on_disk/1024/1024)) AS partition_bytes
+            from clusterAllReplicas('{cluster}', system, parts)
+            WHERE (database = '{database}') AND (table = '{table}')
+                AND (toDate(parseDateTimeBestEffortOrZero(toString(partition))) <= (today() - 3))
+                AND (bytes_on_disk > ((100 * 1024) * 1024))
+                AND disk_name<>'hdfs'
+            group by shard,partition
+        )b
+        on a.shard=b.shard and a.partition=b.partition
+        group by a.shard,
+            a.partition
     )
     GROUP BY partition
     HAVING (min(partition_bytes) <= (avg(partition_bytes) * {low_rate}))
     and (max(partition_bytes) >= (avg(partition_bytes) * {high_rate}))
-    order by partition desc 
-
+    order by partition desc;
     """
     get_parts = """select _shard_num
         ,name as part_name
@@ -106,6 +121,7 @@ class CHSQL:
         and partition='{partition}'
         and bytes_on_disk>100
         and disk_name<>'hdfs'
+        
     """
     fetch_part = """ALTER TABLE {database}.{table} FETCH PART '{part_name}' FROM '/clickhouse/tables/{layer}-{shard}/{database}.{table}'
     """
