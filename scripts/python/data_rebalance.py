@@ -480,7 +480,7 @@ def fetch_part(th_num, partition, mvp):
                                          chsql.attach_part.format(database=database, table=table,
                                                                   part_name=part_name)])
             logger.error(f"{log_header2}:send_shard<{send_shard}>:attach failed, need manual recovery")
-    for node in node_dict[send_shard]:
+    for node in node_dict[recv_shard]:
         node[1].execute(chsql.set_drop_detached)
         node[1].execute(
             chsql.drop_detach_part.format(database=database, table=table, part_name=part_name))
